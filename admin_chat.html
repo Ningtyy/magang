@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Chat</title>
+</head>
+<body>
+    <div id="chat"></div>
+    <form>
+        <textarea id="message" placeholder="Tulis pesan..."></textarea>
+        <button type="button" onclick="sendMessage()">Kirim</button>
+    </form>
+    <script>
+        function sendMessage() {
+            var message = document.getElementById('message').value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'admin_send_message.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status == 200) {
+                    document.getElementById('message').value = '';
+                    getMessages();
+                }
+            };
+            xhr.send('message=' + message);
+        }
+
+        function getMessages() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'admin_get_messages.php', true);
+            xhr.onload = function () {
+                if (xhr.status == 200) {
+                    document.getElementById('chat').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+
+        setInterval(getMessages, 1000); // Update setiap 1 detik
+    </script>
+</body>
+</html>
